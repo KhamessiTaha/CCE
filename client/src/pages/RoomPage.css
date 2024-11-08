@@ -1,0 +1,21 @@
+/* RoomPage.css */
+.room-page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding: 20px;
+}
+
+header {
+  margin-bottom: 20px;
+}
+
+.room-content {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+}
+
+.code-editor {
+  flex: 2;
+}
