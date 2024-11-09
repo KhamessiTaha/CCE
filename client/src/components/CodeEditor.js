@@ -38,7 +38,7 @@ const CodeEditor = ({ roomId }) => {
   return (
     <div className="monaco-editor-container">
       <div className="editor-header">
-        <h3>VSCode Collaborative Editor</h3>
+        <h3>CCEditor</h3>
         <div className="editor-settings">
           <label>Language:</label>
           <select value={language} onChange={(e) => setLanguage(e.target.value)}>
@@ -60,7 +60,7 @@ const CodeEditor = ({ roomId }) => {
           <input
             type="number"
             min="10"
-            max="24"
+            max="150"
             value={fontSize}
             onChange={(e) => setFontSize(Number(e.target.value))}
           />
