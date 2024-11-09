@@ -6,11 +6,11 @@ import Signup from './pages/Signup';
 import Logout from './pages/Logout';
 import { AuthProvider } from './contexts/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
+import RoomRoute from './components/RoomRoute';  // Add this import
 import Dashboard from './pages/Dashboard';
 import CreateRoom from './pages/CreateRoom';
 import JoinRoom from './pages/JoinRoom';
 import RoomPage from './pages/RoomPage';
-
 
 function App() {
   return (
@@ -24,7 +24,7 @@ function App() {
           <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/create-room" element={<PrivateRoute><CreateRoom /></PrivateRoute>} />
           <Route path="/join-room" element={<JoinRoom />} />
-          <Route path="/room/:roomId" element={<RoomPage />} />
+          <Route path="/room/:roomId" element={<RoomRoute><RoomPage /></RoomRoute>} />
         </Routes>
       </Router>
     </AuthProvider>

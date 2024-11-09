@@ -1,0 +1,31 @@
+.user-list-container {
+    flex: 1;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+  }
+  
+  .user-list-container h3 {
+    margin-bottom: 10px;
+  }
+  
+  .user-list-container ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .user-list-container li {
+    margin-bottom: 5px;
+  }
+  
+  .room-master {
+    font-weight: bold;
+    color: #2c5282; /* Dark blue color */
+  }
+  
+  .user-name {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }

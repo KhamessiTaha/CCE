@@ -4,18 +4,145 @@
   flex-direction: column;
   height: 100vh;
   padding: 20px;
+  background-color: #f5f7fa;
 }
 
-header {
+.room-header {
+  background-color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
+}
+
+.room-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.room-info h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #2d3748;
+}
+
+.room-id {
+  color: #718096;
+  font-size: 14px;
+}
+
+.private-badge {
+  background-color: #4a5568;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.user-welcome {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #4a5568;
+  font-size: 14px;
+}
+
+.user-welcome p {
+  margin: 5px 0;
+}
+
+.room-creator {
+  color: #718096;
+  font-style: italic;
 }
 
 .room-content {
   display: flex;
   gap: 20px;
-  flex: 1;
+  height: calc(100vh - 150px);
+  min-height: 500px;
 }
 
-.code-editor {
-  flex: 2;
+.editor-section {
+  flex: 1;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.side-section {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.user-list-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 200px;
+  overflow-y: auto;
+}
+
+.chat-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  min-height: 300px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.room-loading,
+.room-error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f7fa;
+}
+
+.room-error {
+  color: #e53e3e;
+}
+
+@media (max-width: 1024px) {
+  .room-content {
+    flex-direction: column;
+  }
+
+  .side-section {
+    width: 100%;
+    flex-direction: row;
+  }
+
+  .user-list-container {
+    width: 300px;
+    height: 300px;
+  }
+
+  .chat-container {
+    flex: 1;
+    height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .side-section {
+    flex-direction: column;
+  }
+
+  .user-list-container {
+    width: 100%;
+  }
+
+  .room-content {
+    height: auto;
+  }
 }

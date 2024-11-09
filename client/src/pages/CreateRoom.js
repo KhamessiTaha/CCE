@@ -1,71 +1,101 @@
+// CreateRoom.js
 import React, { useState } from 'react';
+import { collection, doc, setDoc, addDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid'; // For generating unique room IDs
-import { getFirestore, doc, setDoc } from 'firebase/firestore';
-import { auth } from '../firebaseConfig';
+import { useAuth } from '../contexts/AuthContext';
 import './CreateRoom.css';
 
 const CreateRoom = () => {
   const [roomName, setRoomName] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
-  const db = getFirestore();
+  const { currentUser } = useAuth();
 
-  const handleCreateRoom = async () => {
-    if (!roomName) {
-      alert('Room name is required.');
+  const handleCreateRoom = async (e) => {
+    e.preventDefault();
+    
+    if (!roomName.trim()) {
+      setError('Room name is required');
       return;
     }
 
-    const roomId = uuidv4(); // Generate unique room ID
-    const roomData = {
-      roomId,
-      roomName,
-      isPrivate,
-      password: isPrivate ? password : null,
-      createdBy: auth.currentUser?.email,
-      createdAt: new Date(),
-    };
+    if (isPrivate && !password.trim()) {
+      setError('Password is required for private rooms');
+      return;
+    }
 
     try {
-      await setDoc(doc(db, 'rooms', roomId), roomData);
-      alert('Room created successfully!');
-      navigate(`/room/${roomId}`); // Redirect to the room page
+      // First create the room document
+      const roomRef = await addDoc(collection(db, 'rooms'), {
+        name: roomName,
+        isPrivate: isPrivate,
+        password: isPrivate ? password : null,
+        createdAt: new Date(),
+        createdBy: currentUser.uid,
+        creatorEmail: currentUser.email
+      });
+
+      // Then add the creator as the first user in the room's users collection
+      const creatorRef = doc(collection(db, 'rooms', roomRef.id, 'users'), currentUser.uid);
+      await setDoc(creatorRef, {
+        email: currentUser.email,
+        name: 'Room_Master',
+        isCreator: true,
+        joinedAt: new Date(),
+        role: 'admin'
+      });
+
+      navigate(`/room/${roomRef.id}`);
     } catch (error) {
       console.error('Error creating room:', error);
-      alert('Failed to create room. Please try again.');
+      setError('Failed to create room. Please try again.');
     }
   };
 
   return (
     <div className="create-room-container">
-      <h2>Create a Room</h2>
-      <form onSubmit={(e) => { e.preventDefault(); handleCreateRoom(); }}>
-        <input
-          type="text"
-          placeholder="Room Name"
-          value={roomName}
-          onChange={(e) => setRoomName(e.target.value)}
-          required
-        />
-        <label>
+      <h2>Create a New Room</h2>
+      <form onSubmit={handleCreateRoom}>
+        <div className="form-group">
+          <label>Room Name</label>
           <input
-            type="checkbox"
-            checked={isPrivate}
-            onChange={() => setIsPrivate(!isPrivate)}
-          />
-          Private Room
-        </label>
-        {isPrivate && (
-          <input
-            type="password"
-            placeholder="Set Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            type="text"
+            value={roomName}
+            onChange={(e) => setRoomName(e.target.value)}
+            placeholder="Enter room name"
             required
           />
+        </div>
+
+        <div className="form-group">
+          <label>
+            <input
+              type="checkbox"
+              checked={isPrivate}
+              onChange={(e) => setIsPrivate(e.target.checked)}
+            />
+            Make room private
+          </label>
+        </div>
+
+        {isPrivate && (
+          <div className="form-group">
+            <label>Room Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter room password"
+              required={isPrivate}
+            />
+          </div>
         )}
+
+        {error && <p className="error-text">{error}</p>}
+        
         <button type="submit">Create Room</button>
       </form>
     </div>

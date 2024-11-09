@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, collection } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
+import { getAuth } from 'firebase/auth';
 import './JoinRoom.css';
 
 const JoinRoom = () => {
@@ -8,8 +10,12 @@ const JoinRoom = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isPrivate, setIsPrivate] = useState(false);
-  const db = getFirestore();
   const navigate = useNavigate();
+  const auth = getAuth();
+
+  const generateGuestId = () => {
+    return `guest_${Math.random().toString(36).substr(2, 9)}`;
+  };
 
   const handleJoinRoom = async () => {
     if (!roomId) {
@@ -23,16 +29,37 @@ const JoinRoom = () => {
 
       if (roomSnap.exists()) {
         const roomData = roomSnap.data();
+        
         if (roomData.isPrivate) {
           setIsPrivate(true);
-          if (roomData.password === password) {
-            navigate(`/room/${roomId}`); // Navigate to room if password is correct
-          } else {
+          if (roomData.password !== password) {
             setError('Incorrect password.');
+            return;
           }
-        } else {
-          navigate(`/room/${roomId}`); // Navigate to room if it's public
         }
+
+        // Generate a unique ID and user data
+        const currentUser = auth.currentUser;
+        const userId = currentUser ? currentUser.uid : generateGuestId();
+        
+        const userData = {
+          isGuest: !currentUser,
+          email: currentUser ? currentUser.email : null,
+          name: currentUser ? currentUser.email : `Guest_${userId.slice(-4)}`,
+          joinedAt: new Date(),
+        };
+
+        // Add user to room
+        const userRef = doc(collection(db, 'rooms', roomId, 'users'), userId);
+        await setDoc(userRef, userData);
+
+        // Store guest ID in localStorage if not logged in
+        if (!currentUser) {
+          localStorage.setItem(`room_${roomId}_guestId`, userId);
+        }
+
+        // Navigate to room
+        navigate(`/room/${roomId}`);
       } else {
         setError('Room not found. Please check the Room ID.');
       }
@@ -51,7 +78,7 @@ const JoinRoom = () => {
         value={roomId}
         onChange={(e) => {
           setRoomId(e.target.value);
-          setError(''); // Clear error when typing
+          setError(''); 
         }}
         required
       />

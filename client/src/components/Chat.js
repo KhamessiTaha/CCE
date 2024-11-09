@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from 'firebase/firestore';
+import {  collection, addDoc, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 import { useAuth } from '../contexts/AuthContext';
 import './Chat.css';
 
@@ -7,7 +8,6 @@ const Chat = ({ roomId }) => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const { currentUser } = useAuth();
-  const db = getFirestore();
 
   useEffect(() => {
     const q = query(collection(db, 'rooms', roomId, 'messages'), orderBy('timestamp', 'asc'));
@@ -16,7 +16,7 @@ const Chat = ({ roomId }) => {
     });
 
     return () => unsubscribe();
-  }, [db, roomId]);
+  }, [roomId]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
