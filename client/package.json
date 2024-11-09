@@ -5,10 +5,11 @@
   "dependencies": {
     "@codemirror/basic-setup": "^0.20.0",
     "@codemirror/lang-javascript": "^6.2.2",
+    "@monaco-editor/react": "^4.6.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "codemirror": "^5.65.18",
+    "codemirror": "^5.65.2",
     "dotenv": "^16.4.5",
     "firebase": "^11.0.1",
     "lucide-react": "^0.456.0",

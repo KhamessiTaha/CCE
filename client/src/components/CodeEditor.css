@@ -1,0 +1,45 @@
+.monaco-editor-container {
+    display: flex;
+    flex-direction: column;
+    background-color: #1e1e1e; /* VSCode-like background */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+    height: 90vh;
+    margin: 20px;
+  }
+  
+  .editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #252526; /* VSCode header color */
+    padding: 10px;
+    border-bottom: 1px solid #333;
+  }
+  
+  .editor-header h3 {
+    color: #d4d4d4;
+    margin: 0;
+  }
+  
+  .editor-settings {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+  
+  .editor-settings label {
+    font-weight: bold;
+    color: #d4d4d4;
+  }
+  
+  .editor-settings select,
+  .editor-settings input {
+    background-color: #333;
+    color: #d4d4d4;
+    border: none;
+    border-radius: 4px;
+    padding: 5px;
+  }
+  
