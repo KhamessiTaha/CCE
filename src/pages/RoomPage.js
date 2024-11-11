@@ -21,7 +21,7 @@ const RoomPage = () => {
       try {
         const roomRef = doc(db, 'rooms', roomId);
         const roomSnap = await getDoc(roomRef);
-        
+
         if (roomSnap.exists()) {
           setRoomData({ id: roomSnap.id, ...roomSnap.data() });
         } else {
@@ -83,7 +83,7 @@ const RoomPage = () => {
         <div className="editor-section">
           <CodeEditor roomId={roomId} />
         </div>
-        
+
         <div className="side-section">
           <div className="user-list-container">
             <UserList roomId={roomId} />
