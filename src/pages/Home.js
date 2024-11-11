@@ -64,10 +64,6 @@ const Home = () => {
         </div>
       </div>
       <div className="home-image" aria-label="Collaborative code editing hero image"></div>
-      <div className="scroll-prompt">
-        <span>Scroll down</span>
-        <i className="fas fa-chevron-down"></i>
-      </div>
     </div>
   );
 };

@@ -1,42 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { db } from '../firebaseConfig';
-import { collection, onSnapshot } from 'firebase/firestore';
+import React from 'react';
 import './ActivityLog.css';
 
-const ActivityLog = ({ roomId }) => {
-  const [activities, setActivities] = useState([]);
-
-  useEffect(() => {
-    if (!roomId) return;
-
-    const activitiesRef = collection(db, 'rooms', roomId, 'activities');
-    const unsubscribe = onSnapshot(activitiesRef, (snapshot) => {
-      const newActivities = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        timestamp: doc.data().timestamp ? doc.data().timestamp.toDate() : new Date(),
-      }));
-      setActivities(newActivities.sort((a, b) => b.timestamp - a.timestamp));
-    });
-
-    return () => unsubscribe();
-  }, [roomId]);
+const ActivityLog = ({ activities = [] }) => {  // Provide default empty array
+  if (!activities || activities.length === 0) {
+    return <div className="activity-log">No recent activities</div>;
+  }
 
   return (
-    <div className="activity-log-container">
-      <h3>Recent Activity</h3>
-      {activities.length > 0 ? (
-        <ul>
-          {activities.map((activity) => (
-            <li key={activity.id}>
-              <p><strong>{activity.user}</strong> {activity.action}</p>
-              <span>{activity.timestamp.toLocaleString()}</span>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No recent activity.</p>
-      )}
+    <div className="activity-log">
+      {activities.map((activity) => (
+        <div key={`${activity.user}-${activity.action}-${activity.timestamp?.seconds}`} className="activity-item">
+          <strong>{activity.user}</strong> {activity.action}
+          <div className="activity-timestamp">
+            {activity.timestamp ? new Date(activity.timestamp.seconds * 1000).toLocaleString() : 'N/A'}
+          </div>
+        </div>
+      ))}
     </div>
   );
 };

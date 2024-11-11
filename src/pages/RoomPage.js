@@ -1,7 +1,6 @@
-// RoomPage.js
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot, collection, addDoc, serverTimestamp, getDocs } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { useAuth } from '../contexts/AuthContext';
 import CodeEditor from '../components/CodeEditor';
@@ -15,6 +14,30 @@ const RoomPage = () => {
   const [roomData, setRoomData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [hasLoggedJoin, setHasLoggedJoin] = useState(false);
+
+  // Function to log activities
+  const logActivity = async (action) => {
+    try {
+      const activitiesRef = collection(db, 'rooms', roomId, 'activities');
+      const existingActivities = await getDocs(activitiesRef);
+      const foundActivity = existingActivities.docs.find(
+        (doc) =>
+          doc.data().user === (currentUser ? currentUser.email : `Guest_${localStorage.getItem(`room_${roomId}_guestId`)?.slice(-4)}`) &&
+          doc.data().action === action
+      );
+
+      if (!foundActivity) {
+        await addDoc(activitiesRef, {
+          user: currentUser ? currentUser.email : `Guest_${localStorage.getItem(`room_${roomId}_guestId`)?.slice(-4)}`,
+          action,
+          timestamp: serverTimestamp(),
+        });
+      }
+    } catch (err) {
+      console.error('Error logging activity:', err);
+    }
+  };
 
   useEffect(() => {
     const fetchRoomData = async () => {
@@ -24,6 +47,12 @@ const RoomPage = () => {
 
         if (roomSnap.exists()) {
           setRoomData({ id: roomSnap.id, ...roomSnap.data() });
+
+          // Log "joined the room" only once per session
+          if (!hasLoggedJoin) {
+            logActivity('joined the room');
+            setHasLoggedJoin(true);
+          }
         } else {
           setError('Room not found');
         }
@@ -37,6 +66,7 @@ const RoomPage = () => {
 
     fetchRoomData();
 
+    // Listen for real-time updates
     const unsubscribe = onSnapshot(doc(db, 'rooms', roomId), (doc) => {
       if (doc.exists()) {
         setRoomData({ id: doc.id, ...doc.data() });
@@ -45,7 +75,7 @@ const RoomPage = () => {
     });
 
     return () => unsubscribe();
-  }, [roomId]);
+  }, [roomId, hasLoggedJoin]); // Add hasLoggedJoin as a dependency
 
   if (loading) {
     return (
@@ -81,7 +111,7 @@ const RoomPage = () => {
 
       <div className="room-content">
         <div className="editor-section">
-          <CodeEditor roomId={roomId} />
+          <CodeEditor roomId={roomId} logActivity={logActivity} />
         </div>
 
         <div className="side-section">

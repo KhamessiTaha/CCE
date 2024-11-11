@@ -11,7 +11,7 @@ const CodeEditor = ({ roomId }) => {
   const [fontSize, setFontSize] = useState(14);
   const [files, setFiles] = useState(['index.js']);
   const [currentFile, setCurrentFile] = useState('index.js');
-  const roomRef = doc(db, 'rooms', roomId);
+
 
   useEffect(() => {
     const fetchFiles = async () => {
