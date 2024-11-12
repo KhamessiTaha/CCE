@@ -1,20 +1,25 @@
-// Chat.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { db } from '../firebaseConfig';
 import { collection, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 import './Chat.css';
 
-const Chat = ({ roomId }) => {
+const Chat = ({ roomId, logActivity }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const { currentUser } = useAuth();
+  const chatMessagesRef = useRef(null);
 
   useEffect(() => {
     const messagesRef = collection(db, 'rooms', roomId, 'messages');
     const unsubscribe = onSnapshot(messagesRef, (snapshot) => {
       const newMessages = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
       setMessages(newMessages.sort((a, b) => a.timestamp - b.timestamp));
+
+      // Scroll to the latest message
+      if (chatMessagesRef.current) {
+        chatMessagesRef.current.scrollTop = chatMessagesRef.current.scrollHeight;
+      }
     });
 
     return () => unsubscribe();
@@ -29,10 +34,11 @@ const Chat = ({ roomId }) => {
     try {
       await addDoc(messagesRef, {
         text: input,
-        user: currentUser ? currentUser.email : `Guest_${Date.now()}`,
+        user: currentUser ? currentUser.email : `Guest_${localStorage.getItem(`room_${roomId}_guestId`)?.slice(-4)}`,
         timestamp: serverTimestamp(),
       });
       setInput('');
+      logActivity('sent a message'); // Log the activity
     } catch (error) {
       console.error('Error sending message:', error);
     }
@@ -40,7 +46,7 @@ const Chat = ({ roomId }) => {
 
   return (
     <div className="chat-container">
-      <div className="chat-messages">
+      <div className="chat-messages" ref={chatMessagesRef}>
         {messages.map((message) => (
           <div key={message.id} className="chat-message">
             <strong className="chat-user">{message.user}:</strong>
