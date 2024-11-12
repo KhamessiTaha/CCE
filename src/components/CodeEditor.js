@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebaseConfig';
-import { doc, onSnapshot, setDoc, collection, getDocs, deleteDoc } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, collection, getDocs, getDoc, deleteDoc } from 'firebase/firestore';
 import Editor from '@monaco-editor/react';
 import './CodeEditor.css';
 
 const CodeEditor = ({ roomId }) => {
   const [code, setCode] = useState('// Start coding collaboratively...');
   const [language, setLanguage] = useState('javascript');
-  const [theme, setTheme] = useState('vs-dark');
+  const [theme, setTheme] = useState('vs-code-dark');
   const [fontSize, setFontSize] = useState(14);
   const [files, setFiles] = useState(['index.js']);
   const [currentFile, setCurrentFile] = useState('index.js');
-
 
   useEffect(() => {
     const fetchFiles = async () => {
@@ -79,7 +78,7 @@ const CodeEditor = ({ roomId }) => {
       try {
         const oldFileRef = doc(db, 'rooms', roomId, 'files', oldFileName);
         const newFileRef = doc(db, 'rooms', roomId, 'files', newFileName);
-        const oldFileSnap = await getDocs(oldFileRef);
+        const oldFileSnap = await getDoc(oldFileRef);
         if (oldFileSnap.exists()) {
           const fileData = oldFileSnap.data();
           await setDoc(newFileRef, fileData);
@@ -121,12 +120,15 @@ const CodeEditor = ({ roomId }) => {
             <button onClick={handleNewFile} title="New File">➕</button>
             <button onClick={() => handleDeleteFile(currentFile)} title="Delete Current File">🗑️</button>
             <button onClick={() => handleRenameFile(currentFile)} title="Rename Current File">✏️</button>
-            <input
-              type="file"
-              onChange={handleFileUpload}
-              title="Upload File"
-              className="file-upload"
-            />
+            <label className="upload-label">
+              📁
+              <input
+                type="file"
+                onChange={handleFileUpload}
+                title="Upload File"
+                className="file-upload"
+              />
+            </label>
           </div>
         </div>
         <ul className="file-list">
@@ -157,26 +159,29 @@ const CodeEditor = ({ roomId }) => {
 
             <label>Theme:</label>
             <select value={theme} onChange={(e) => setTheme(e.target.value)}>
-              <option value="vs-dark">Dark</option>
-              <option value="light">Light</option>
+              <option value="vs-code-dark">VSCode Dark</option>
+              <option value="vs-code-light">VSCode Light</option>
               <option value="hc-black">High Contrast</option>
             </select>
 
             <label>Font Size:</label>
-            <input
-              type="number"
-              min="10"
-              max="24"
+            <select
               value={fontSize}
               onChange={(e) => setFontSize(Number(e.target.value))}
-            />
+            >
+              {[10, 12, 14, 16, 18, 20, 22, 24].map((size) => (
+              <option key={size} value={size}>
+              {size}
+              </option>
+              ))}
+            </select>
           </div>
         </div>
 
         <Editor
           height="100%"
           language={language}
-          theme={theme}
+          theme={theme === 'vs-code-dark' ? 'vs-dark' : theme === 'vs-code-light' ? 'light' : 'hc-black'}
           value={code}
           onChange={handleEditorChange}
           options={{
@@ -184,6 +189,27 @@ const CodeEditor = ({ roomId }) => {
             automaticLayout: true,
             minimap: { enabled: false },
             scrollBeyondLastLine: false,
+            padding: {
+              top: 8,
+              bottom: 8
+            },
+            lineDecorationsWidth: 0,
+            lineNumbersMinChars: 3,
+            folding: true,
+            renderLineHighlight: 'all',
+            renderWhitespace: 'all',
+            renderControlCharacters: true,
+            renderIndentGuides: true,
+            scrollbar: {
+              vertical: 'visible',
+              horizontal: 'visible',
+              useShadows: false,
+              verticalHasArrows: false,
+              horizontalHasArrows: false,
+              verticalScrollbarSize: 10,
+              horizontalScrollbarSize: 10,
+              arrowSize: 30
+            }
           }}
         />
       </div>

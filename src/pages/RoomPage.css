@@ -1,102 +1,87 @@
-/* RoomPage.css */
 .room-page-container {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 20px;
-  background-color: #f5f7fa;
+  background-color: #252526;
+  color: #d4d4d4;
 }
 
 .room-header {
-  background-color: white;
-  padding: 15px 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #333;
+  background-color: #2c2c2c;
 }
 
 .room-info {
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 10px;
+  gap: 12px;
 }
 
 .room-info h2 {
   margin: 0;
-  font-size: 24px;
-  color: #2d3748;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .room-id {
-  color: #718096;
   font-size: 14px;
+  color: #a6a6a6;
 }
 
 .private-badge {
-  background-color: #4a5568;
-  color: white;
+  background-color: #007acc;
+  color: #ffffff;
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .user-welcome {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #4a5568;
+  flex-direction: column;
+  align-items: flex-end;
   font-size: 14px;
 }
 
 .user-welcome p {
-  margin: 5px 0;
+  margin: 0;
 }
 
 .room-creator {
-  color: #718096;
-  font-style: italic;
+  color: #a6a6a6;
 }
 
 .room-content {
   display: flex;
-  gap: 20px;
-  height: calc(100vh - 150px);
-  min-height: 500px;
+  flex-grow: 1;
+  overflow: hidden;
 }
 
 .editor-section {
-  flex: 1;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #333;
 }
 
 .side-section {
-  width: 300px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  width: 320px;
+  border-left: 1px solid #333;
 }
 
 .user-list-container {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  height: 200px;
-  overflow-y: auto;
+  flex-grow: 1;
+  border-bottom: 1px solid #333;
 }
 
 .chat-container {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  flex: 1;
-  min-height: 300px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  flex-grow: 1;
 }
 
 .room-loading,
@@ -105,44 +90,74 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f5f7fa;
+  background-color: #252526;
+  color: #d4d4d4;
 }
 
-.room-error {
-  color: #e53e3e;
+.room-loading h2,
+.room-error h2 {
+  font-size: 24px;
+  font-weight: 600;
 }
 
-@media (max-width: 1024px) {
-  .room-content {
-    flex-direction: column;
-  }
 
-  .side-section {
-    width: 100%;
-    flex-direction: row;
-  }
-
-  .user-list-container {
-    width: 300px;
-    height: 300px;
-  }
-
-  .chat-container {
-    flex: 1;
-    height: 300px;
-  }
+.user-list-container {
+  flex-grow: 1;
+  border-bottom: 1px solid #333;
+  background-color: #252526;
+  padding: 16px;
 }
 
-@media (max-width: 768px) {
-  .side-section {
-    flex-direction: column;
-  }
+.user-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
 
-  .user-list-container {
-    width: 100%;
-  }
+.user-list-header h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
 
-  .room-content {
-    height: auto;
-  }
+.user-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  max-height: 50%;
+  overflow-y: auto;
+}
+
+.user-list li {
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 13px;
+}
+
+.user-list li .user-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #007acc;
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.user-list li .user-email {
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-list li .user-status {
+  font-size: 12px;
+  color: #a6a6a6;
 }

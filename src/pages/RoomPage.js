@@ -1,6 +1,7 @@
+// RoomPage.js
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { doc, getDoc, onSnapshot, collection, addDoc, serverTimestamp, getDocs } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
 import { useAuth } from '../contexts/AuthContext';
 import CodeEditor from '../components/CodeEditor';
@@ -20,20 +21,11 @@ const RoomPage = () => {
   const logActivity = async (action) => {
     try {
       const activitiesRef = collection(db, 'rooms', roomId, 'activities');
-      const existingActivities = await getDocs(activitiesRef);
-      const foundActivity = existingActivities.docs.find(
-        (doc) =>
-          doc.data().user === (currentUser ? currentUser.email : `Guest_${localStorage.getItem(`room_${roomId}_guestId`)?.slice(-4)}`) &&
-          doc.data().action === action
-      );
-
-      if (!foundActivity) {
-        await addDoc(activitiesRef, {
-          user: currentUser ? currentUser.email : `Guest_${localStorage.getItem(`room_${roomId}_guestId`)?.slice(-4)}`,
-          action,
-          timestamp: serverTimestamp(),
-        });
-      }
+      await addDoc(activitiesRef, {
+        user: currentUser ? currentUser.email : `Guest_${localStorage.getItem(`room_${roomId}_guestId`)?.slice(-4)}`,
+        action,
+        timestamp: serverTimestamp(),
+      });
     } catch (err) {
       console.error('Error logging activity:', err);
     }
