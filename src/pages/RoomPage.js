@@ -1,4 +1,3 @@
-// RoomPage.js
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { doc, getDoc, onSnapshot, collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -29,6 +28,19 @@ const RoomPage = () => {
     } catch (err) {
       console.error('Error logging activity:', err);
     }
+  };
+
+  // New functions for logging specific actions
+  const handleFileCreation = async (fileName) => {
+    await logActivity(`created a file: ${fileName}`);
+  };
+
+  const handleFileModification = async (fileName) => {
+    await logActivity(`modified the file: ${fileName}`);
+  };
+
+  const handleFileDeletion = async (fileName) => {
+    await logActivity(`deleted the file: ${fileName}`);
   };
 
   useEffect(() => {
@@ -67,7 +79,7 @@ const RoomPage = () => {
     });
 
     return () => unsubscribe();
-  }, [roomId, hasLoggedJoin]); // Add hasLoggedJoin as a dependency
+  }, [roomId, hasLoggedJoin]);
 
   if (loading) {
     return (
@@ -103,7 +115,13 @@ const RoomPage = () => {
 
       <div className="room-content">
         <div className="editor-section">
-          <CodeEditor roomId={roomId} logActivity={logActivity} />
+          <CodeEditor
+            roomId={roomId}
+            logActivity={logActivity}
+            onFileCreate={handleFileCreation}
+            onFileModify={handleFileModification}
+            onFileDelete={handleFileDeletion}
+          />
         </div>
 
         <div className="side-section">
