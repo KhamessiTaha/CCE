@@ -16,13 +16,14 @@ const RoomPage = () => {
   const [error, setError] = useState(null);
   const [hasLoggedJoin, setHasLoggedJoin] = useState(false);
 
-  // Function to log activities
-  const logActivity = async (action) => {
+  // Enhanced function to log activities with additional metadata
+  const logActivity = async (action, metadata = {}) => {
     try {
       const activitiesRef = collection(db, 'rooms', roomId, 'activities');
       await addDoc(activitiesRef, {
         user: currentUser ? currentUser.email : `Guest_${localStorage.getItem(`room_${roomId}_guestId`)?.slice(-4)}`,
         action,
+        metadata,
         timestamp: serverTimestamp(),
       });
     } catch (err) {
@@ -30,17 +31,61 @@ const RoomPage = () => {
     }
   };
 
-  // New functions for logging specific actions
-  const handleFileCreation = async (fileName) => {
-    await logActivity(`created a file: ${fileName}`);
+  // Enhanced file operation handlers with metadata
+  const handleFileCreation = async (fileName, fileType) => {
+    await logActivity('file_created', {
+      fileName,
+      fileType,
+      operation: 'create'
+    });
   };
 
-  const handleFileModification = async (fileName) => {
-    await logActivity(`modified the file: ${fileName}`);
+  const handleFileModification = async (fileName, changesSummary = {}) => {
+    await logActivity('file_modified', {
+      fileName,
+      changesSummary,
+      operation: 'modify'
+    });
   };
 
   const handleFileDeletion = async (fileName) => {
-    await logActivity(`deleted the file: ${fileName}`);
+    await logActivity('file_deleted', {
+      fileName,
+      operation: 'delete'
+    });
+  };
+
+  // New handlers for additional file operations
+  const handleFileRename = async (oldFileName, newFileName) => {
+    await logActivity('file_renamed', {
+      oldFileName,
+      newFileName,
+      operation: 'rename'
+    });
+  };
+
+  const handleFileUpload = async (fileName, fileSize, fileType) => {
+    await logActivity('file_uploaded', {
+      fileName,
+      fileSize,
+      fileType,
+      operation: 'upload'
+    });
+  };
+
+  const handleFileDownload = async (fileName) => {
+    await logActivity('file_downloaded', {
+      fileName,
+      operation: 'download'
+    });
+  };
+
+  const handleFileCopy = async (sourceFileName, destinationFileName) => {
+    await logActivity('file_copied', {
+      sourceFileName,
+      destinationFileName,
+      operation: 'copy'
+    });
   };
 
   useEffect(() => {
@@ -52,9 +97,11 @@ const RoomPage = () => {
         if (roomSnap.exists()) {
           setRoomData({ id: roomSnap.id, ...roomSnap.data() });
 
-          // Log "joined the room" only once per session
           if (!hasLoggedJoin) {
-            logActivity('joined the room');
+            logActivity('joined_room', {
+              operation: 'join',
+              userType: currentUser ? 'registered' : 'guest'
+            });
             setHasLoggedJoin(true);
           }
         } else {
@@ -70,7 +117,6 @@ const RoomPage = () => {
 
     fetchRoomData();
 
-    // Listen for real-time updates
     const unsubscribe = onSnapshot(doc(db, 'rooms', roomId), (doc) => {
       if (doc.exists()) {
         setRoomData({ id: doc.id, ...doc.data() });
@@ -121,6 +167,10 @@ const RoomPage = () => {
             onFileCreate={handleFileCreation}
             onFileModify={handleFileModification}
             onFileDelete={handleFileDeletion}
+            onFileRename={handleFileRename}
+            onFileUpload={handleFileUpload}
+            onFileDownload={handleFileDownload}
+            onFileCopy={handleFileCopy}
           />
         </div>
 
