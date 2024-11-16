@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "CCEditor",
+  "name": "Collaborative Code Editor",
   "icons": [
     {
       "src": "favicon.ico",
