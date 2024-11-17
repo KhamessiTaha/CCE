@@ -46,14 +46,12 @@ Try the live demo: [Collaborative Code Editor Demo](https://cceditor-e1b05.web.a
   - React.js
   - CodeMirror 6
   - Material-UI
-  - Socket.io-client
 
 - **Backend**
   - Firebase
     - Firestore
     - Authentication
     - Hosting
-  - WebSocket Server
 
 ## 📋 Prerequisites
 
@@ -92,12 +90,13 @@ Try the live demo: [Collaborative Code Editor Demo](https://cceditor-e1b05.web.a
 
 ## 🔑 Usage
 
-1. **Creating a Room**
+1. **Login/Signup and Create a Room**
+   - Login/Signup and navigate to your dahsboard
    - Click "New Room" on the dashboard
    - Choose room settings (public/private)
    - Share the room ID with collaborators
 
-2. **Joining a Room**
+3. **Joining a Room**
    - Enter room ID 
    - Start collaborating!
 
