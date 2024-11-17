@@ -6,7 +6,7 @@
 
 A real-time, full-stack collaborative code editor built with React and Firebase. Create coding rooms, collaborate with others, and write code together in real-time. Perfect for pair programming, teaching, and remote collaboration.
 
-[View Demo](cceditor-e1b05.web.app/) · [Report Bug](https://github.com/khamessitaha/cce/issues) · [Request Feature](https://github.com/khamessitaha/cce/issues)
+[View Demo](https://cceditor-e1b05.web.app/) · [Report Bug](https://github.com/khamessitaha/cce/issues) · [Request Feature](https://github.com/khamessitaha/cce/issues)
 
 ## ✨ Features
 
