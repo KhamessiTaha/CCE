@@ -6,7 +6,7 @@
 
 A real-time, full-stack collaborative code editor built with React and Firebase. Create coding rooms, collaborate with others, and write code together in real-time. Perfect for pair programming, teaching, and remote collaboration.
 
-[View Demo](https://your-demo-link.com) · [Report Bug](https://github.com/username/collaborative-code-editor/issues) · [Request Feature](https://github.com/username/collaborative-code-editor/issues)
+[View Demo](cceditor-e1b05.web.app/) · [Report Bug](https://github.com/khamessitaha/cce/issues) · [Request Feature](https://github.com/khamessitaha/cce/issues)
 
 ## ✨ Features
 
@@ -38,7 +38,7 @@ A real-time, full-stack collaborative code editor built with React and Firebase.
 
 ## 🚀 Live Demo
 
-Try the live demo: [Collaborative Code Editor Demo](https://your-demo-link.com)
+Try the live demo: [Collaborative Code Editor Demo](https://cceditor-e1b05.web.app)
 
 ## 🔧 Tech Stack
 
@@ -66,8 +66,8 @@ Try the live demo: [Collaborative Code Editor Demo](https://your-demo-link.com)
 
 1. Clone the repository
    ```bash
-   git clone https://github.com/username/collaborative-code-editor.git
-   cd collaborative-code-editor
+   git clone https://github.com/khamessitaha/cce.git
+   cd cce
    ```
 
 2. Install dependencies
@@ -98,14 +98,9 @@ Try the live demo: [Collaborative Code Editor Demo](https://your-demo-link.com)
    - Share the room ID with collaborators
 
 2. **Joining a Room**
-   - Enter room ID or click invite link
-   - Choose display name (if guest)
+   - Enter room ID 
    - Start collaborating!
 
-3. **Editor Features**
-   - Use Ctrl+S to save
-   - Ctrl+F to search
-   - Ctrl+Space for autocompletion
 
 ## 🚀 Deployment
 
@@ -167,7 +162,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Your Name - [@your_twitter](https://twitter.com/your_twitter) - email@example.com
 
-Project Link: [https://github.com/username/collaborative-code-editor](https://github.com/username/collaborative-code-editor)
+Project Link: [https://github.com/khamessitaha/cce](https://github.com/khamessitaha/cce)
 
 ## 🙏 Acknowledgments
 
