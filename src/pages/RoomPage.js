@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import {
   doc,
@@ -24,24 +24,26 @@ const RoomPage = () => {
   const [hasLoggedJoin, setHasLoggedJoin] = useState(false);
 
   // Enhanced function to log activities with additional metadata
-  const logActivity = async (action, metadata = {}) => {
-    try {
-      const activitiesRef = collection(db, "rooms", roomId, "activities");
-      await addDoc(activitiesRef, {
-        user: currentUser
-          ? currentUser.email
-          : `Guest_${localStorage
-              .getItem(`room_${roomId}_guestId`)
-              ?.slice(-4)}`,
-        action,
-        metadata,
-        timestamp: serverTimestamp(),
-      });
-    } catch (err) {
-      console.error("Error logging activity:", err);
-    }
-  };
-
+  const logActivity = useCallback(
+    async (action, metadata = {}) => {
+      try {
+        const activitiesRef = collection(db, "rooms", roomId, "activities");
+        await addDoc(activitiesRef, {
+          user: currentUser
+            ? currentUser.email
+            : `Guest_${localStorage
+                .getItem(`room_${roomId}_guestId`)
+                ?.slice(-4)}`,
+          action,
+          metadata,
+          timestamp: serverTimestamp(),
+        });
+      } catch (err) {
+        console.error("Error logging activity:", err);
+      }
+    },
+    [roomId, currentUser]
+  );
   // Enhanced file operation handlers with metadata
   const handleFileCreation = async (fileName, fileType) => {
     await logActivity("file_created", {
@@ -136,7 +138,7 @@ const RoomPage = () => {
     });
 
     return () => unsubscribe();
-  }, [roomId, hasLoggedJoin]);
+  }, [roomId, hasLoggedJoin, currentUser, logActivity]);
 
   if (loading) {
     return (
