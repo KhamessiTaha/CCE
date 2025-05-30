@@ -1,12 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { doc, getDoc, onSnapshot, collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
-import { useAuth } from '../contexts/AuthContext';
-import CodeEditor from '../components/CodeEditor';
-import Chat from '../components/Chat';
-import UserList from '../components/UserList';
-import './RoomPage.css';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import {
+  doc,
+  getDoc,
+  onSnapshot,
+  collection,
+  addDoc,
+  serverTimestamp,
+} from "firebase/firestore";
+import { db } from "../firebaseConfig";
+import { useAuth } from "../contexts/AuthContext";
+import CodeEditor from "../components/CodeEditor";
+import Chat from "../components/Chat";
+import UserList from "../components/UserList";
+import "./RoomPage.css";
 
 const RoomPage = () => {
   const { roomId } = useParams();
@@ -19,97 +26,101 @@ const RoomPage = () => {
   // Enhanced function to log activities with additional metadata
   const logActivity = async (action, metadata = {}) => {
     try {
-      const activitiesRef = collection(db, 'rooms', roomId, 'activities');
+      const activitiesRef = collection(db, "rooms", roomId, "activities");
       await addDoc(activitiesRef, {
-        user: currentUser ? currentUser.email : `Guest_${localStorage.getItem(`room_${roomId}_guestId`)?.slice(-4)}`,
+        user: currentUser
+          ? currentUser.email
+          : `Guest_${localStorage
+              .getItem(`room_${roomId}_guestId`)
+              ?.slice(-4)}`,
         action,
         metadata,
         timestamp: serverTimestamp(),
       });
     } catch (err) {
-      console.error('Error logging activity:', err);
+      console.error("Error logging activity:", err);
     }
   };
 
   // Enhanced file operation handlers with metadata
   const handleFileCreation = async (fileName, fileType) => {
-    await logActivity('file_created', {
+    await logActivity("file_created", {
       fileName,
       fileType,
-      operation: 'create'
+      operation: "create",
     });
   };
 
   const handleFileModification = async (fileName, changesSummary = {}) => {
-    await logActivity('file_modified', {
+    await logActivity("file_modified", {
       fileName,
       changesSummary,
-      operation: 'modify'
+      operation: "modify",
     });
   };
 
   const handleFileDeletion = async (fileName) => {
-    await logActivity('file_deleted', {
+    await logActivity("file_deleted", {
       fileName,
-      operation: 'delete'
+      operation: "delete",
     });
   };
 
   // New handlers for additional file operations
   const handleFileRename = async (oldFileName, newFileName) => {
-    await logActivity('file_renamed', {
+    await logActivity("file_renamed", {
       oldFileName,
       newFileName,
-      operation: 'rename'
+      operation: "rename",
     });
   };
 
   const handleFileUpload = async (fileName, fileSize, fileType) => {
-    await logActivity('file_uploaded', {
+    await logActivity("file_uploaded", {
       fileName,
       fileSize,
       fileType,
-      operation: 'upload'
+      operation: "upload",
     });
   };
 
   const handleFileDownload = async (fileName) => {
-    await logActivity('file_downloaded', {
+    await logActivity("file_downloaded", {
       fileName,
-      operation: 'download'
+      operation: "download",
     });
   };
 
   const handleFileCopy = async (sourceFileName, destinationFileName) => {
-    await logActivity('file_copied', {
+    await logActivity("file_copied", {
       sourceFileName,
       destinationFileName,
-      operation: 'copy'
+      operation: "copy",
     });
   };
 
   useEffect(() => {
     const fetchRoomData = async () => {
       try {
-        const roomRef = doc(db, 'rooms', roomId);
+        const roomRef = doc(db, "rooms", roomId);
         const roomSnap = await getDoc(roomRef);
 
         if (roomSnap.exists()) {
           setRoomData({ id: roomSnap.id, ...roomSnap.data() });
 
           if (!hasLoggedJoin) {
-            logActivity('joined_room', {
-              operation: 'join',
-              userType: currentUser ? 'registered' : 'guest'
+            logActivity("joined_room", {
+              operation: "join",
+              userType: currentUser ? "registered" : "guest",
             });
             setHasLoggedJoin(true);
           }
         } else {
-          setError('Room not found');
+          setError("Room not found");
         }
       } catch (err) {
-        console.error('Error fetching room:', err);
-        setError('Failed to load room data');
+        console.error("Error fetching room:", err);
+        setError("Failed to load room data");
       } finally {
         setLoading(false);
       }
@@ -117,7 +128,7 @@ const RoomPage = () => {
 
     fetchRoomData();
 
-    const unsubscribe = onSnapshot(doc(db, 'rooms', roomId), (doc) => {
+    const unsubscribe = onSnapshot(doc(db, "rooms", roomId), (doc) => {
       if (doc.exists()) {
         setRoomData({ id: doc.id, ...doc.data() });
         setLoading(false);
@@ -147,14 +158,43 @@ const RoomPage = () => {
     <div className="room-page-container">
       <header className="room-header">
         <div className="room-info">
-          <h2>Room: {roomData?.name}</h2>
-          <span className="room-id">Room ID: {roomId}</span>
-          {roomData?.isPrivate && <span className="private-badge">Private Room</span>}
+          <div className="room-title-wrapper">
+            <h2 className="room-title">
+              <span className="room-icon">🚀</span>
+              {roomData?.name || "Untitled Room"}
+            </h2>
+            <div className="room-meta">
+              <span className="room-id">
+                <span className="meta-icon">🔑</span> {roomId}
+              </span>
+              {roomData?.isPrivate && (
+                <span className="private-badge">
+                  <span className="lock-icon">🔒</span> Private Room
+                </span>
+              )}
+            </div>
+          </div>
         </div>
-        <div className="user-welcome">
-          <p>Welcome, {currentUser ? currentUser.email : `Guest_${localStorage.getItem(`room_${roomId}_guestId`)?.slice(-4)}`}!</p>
+        <div className="user-info">
+          <div className="user-greeting">
+            <span className="welcome-icon">👋</span>
+            <span className="welcome-text">
+              Welcome,{" "}
+              <span className="user-identity">
+                {currentUser
+                  ? currentUser.email
+                  : `Guest_${localStorage
+                      .getItem(`room_${roomId}_guestId`)
+                      ?.slice(-4)}`}
+              </span>
+            </span>
+          </div>
           {roomData?.creatorEmail && (
-            <p className="room-creator">Created by: {roomData.creatorEmail}</p>
+            <div className="room-creator">
+              <span className="creator-icon">👑</span>
+              Created by:{" "}
+              <span className="creator-name">{roomData.creatorEmail}</span>
+            </div>
           )}
         </div>
       </header>
